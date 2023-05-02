@@ -1,7 +1,10 @@
-﻿using System;
+﻿using BusinessEntity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -117,6 +120,7 @@ namespace WSE
 
         private void AnalyzeButton_Click(object sender, RoutedEventArgs e)
         {
+            this.DataContext = ServersVM;
             GamesGrid.Visibility = Visibility.Hidden;
             ServersGrid.Visibility = Visibility.Hidden;
             AnalyzeGrid.Visibility = Visibility.Visible;
@@ -130,6 +134,32 @@ namespace WSE
         private void PredictButton_Click(object sender, RoutedEventArgs e)
         {
             chartCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void SearchServersButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ServersComboBox.SelectedItem == null || !StartDateCalendar.SelectedDate.HasValue || !EndDateCalendar.SelectedDate.HasValue || StartDateCalendar.SelectedDate.Value > EndDateCalendar.SelectedDate.Value)
+            {
+                MessageBox.Show("One from the values is empty!");
+                return;
+            }
+
+            this.DataContext = ServersVM;
+
+            ObservableCollection<GameServer> serversData = ServersVM.ServersData;
+
+            //
+
+            //
+
+            this.DataGamesGrid.ItemsSource = serversData;
+
+            var gameServer = (GameServer)ServersComboBox.SelectedItem;
+            var startDate = StartDateCalendar.SelectedDate.Value;
+            var endDate = EndDateCalendar.SelectedDate.Value;
+
+
+            MessageBox.Show("Good");
         }
     }
 

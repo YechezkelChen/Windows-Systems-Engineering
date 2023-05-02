@@ -88,6 +88,8 @@
     </ApplicationDefinition>
     <Compile Include="Commands\GamesInformation.cs" />
     <Compile Include="Commands\ServersInformation.cs" />
+    <Compile Include="Commands\ServersInformationData.cs" />
+    <Compile Include="ServerDataMultiConverter.cs" />
     <Compile Include="Models\ServersModel.cs" />
     <Compile Include="Services\ServerHttpClient.cs" />
     <Compile Include="ViewModels\GamesVM.cs" />
@@ -151,6 +153,8 @@
       <Name>BusinessEntity</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Converters\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -22,19 +22,6 @@ namespace WSE.ViewModels
 
         public ObservableCollection<Game> Games { get; set; }
 
-        //
-        public string GeneralInfo
-        {
-            get { return CurrentModel.GeneralInfo; }
-            set
-            {
-                CurrentModel.GeneralInfo = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("GeneralInfo"));
-            }
-        }
-        //
-
         public GamesVM()
         {
             CurrentModel = new GamesModel();

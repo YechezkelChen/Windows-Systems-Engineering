@@ -35,7 +35,7 @@
 
             <Button x:Name="GamesInformationButton" Content="Games&#xa;Information" Command="{Binding GamesInfo}" HorizontalAlignment="Left" Height="45" Margin="5,120,0,0" VerticalAlignment="Top" Width="85" Click="GamesInformationButton_Click"/>
             <Button x:Name="ServersInformationButton" Content="Servers&#xa;Information" Command="{Binding ServersInfo}" HorizontalAlignment="Left" Height="45" Margin="5,185,0,0" VerticalAlignment="Top" Width="85" Click="ServersInformationButton_Click"/>
-            <Button x:Name="AnalyzeButton" Content="Analyze" HorizontalAlignment="Left" Height="45" Margin="5,255,0,0" VerticalAlignment="Top" Width="85" Click="AnalyzeButton_Click"/>
+            <Button x:Name="AnalyzeButton" Content="Analyze" Command="{Binding ServersInfo}" HorizontalAlignment="Left" Height="45" Margin="5,255,0,0" VerticalAlignment="Top" Width="85" Click="AnalyzeButton_Click"/>
 
         </Grid>
 
@@ -73,7 +73,7 @@
             <ListView x:Name="GamesBox" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" ItemsSource="{Binding Games}" Background="#FF0C0C0C">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="5" HorizontalAlignment="Stretch"/>
+                        <UniformGrid Columns="2" HorizontalAlignment="Stretch"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ListView.ItemTemplate>
@@ -130,12 +130,12 @@
             <ListView x:Name="ServersBox" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" ItemsSource="{Binding Servers}" Background="#FF0C0C0C">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="5" HorizontalAlignment="Stretch"/>
+                        <UniformGrid Columns="2" HorizontalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="{Binding serverName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
                             <TextBlock Text="{Binding serverRegion}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
                             <TextBlock Text="{Binding serverUp}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
@@ -165,17 +165,16 @@
             <Grid x:Name="PlayersMonitorGrid" Grid.Row="1" Visibility="Hidden">
 
                 <TextBlock HorizontalAlignment="Left" Margin="450,39,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Total Players Today" VerticalAlignment="Top" Foreground="White"/>
-                <TextBlock x:Name="TotalPlayersToday" Text="{Binding playerCount}" HorizontalAlignment="Left" Margin="482,55,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
+                <TextBlock x:Name="TotalPlayersToday" HorizontalAlignment="Left" Margin="482,55,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
-                <!--לעשות בהמשך כמו בראשון בכולם..אני פשוט לא יודע איזה שדות בדיוק-->
                 <TextBlock HorizontalAlignment="Left" Margin="613,39,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Max Score" VerticalAlignment="Top" Foreground="White"/>
-                <TextBlock x:Name="MaxScore" HorizontalAlignment="Left" Margin="586,55,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
-
+                <TextBlock x:Name="MaxScore" Text="" HorizontalAlignment="Left" Margin="586,55,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
+                
                 <TextBlock HorizontalAlignment="Left" Margin="450,90,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Average Player Time [min]" VerticalAlignment="Top" Foreground="White"/>
                 <TextBlock x:Name="AveragePlayerTimeMin" HorizontalAlignment="Left" Margin="482,106,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
                 <TextBlock HorizontalAlignment="Left" Margin="613,90,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Current Players" VerticalAlignment="Top" Foreground="White"/>
-                <TextBlock x:Name="CurrentPlayers" HorizontalAlignment="Left" Margin="628,106,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
+                <TextBlock x:Name="CurrentPlayers" Text="{Binding playerCount}" HorizontalAlignment="Left" Margin="628,106,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
                 <!--להוסיף גרף עומס לפי שעות.... צריך לחפש באינטרנט-->
 
@@ -190,19 +189,35 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Game" HorizontalAlignment="Left" Margin="25,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="75" Foreground="White"/>
-            <ComboBox Width="150" Height="50" Margin="25,30,560,300"/>
-
+            <ComboBox x:Name="ServersComboBox" Width="150" Height="50" Margin="25,30,560,300" ItemsSource="{Binding Servers}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <TextBlock Text="{Binding serverName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+                                                                                            
             <TextBlock Text="Start Date" HorizontalAlignment="Left" Margin="192,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74" Foreground="White"/>
             <Viewbox Margin="185,30,350,150">
-                <Calendar/>
+                <Calendar x:Name="StartDateCalendar" />
             </Viewbox>
 
             <TextBlock Text="End Date" HorizontalAlignment="Left" Margin="407,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74" Foreground="White"/>
             <Viewbox Margin="400,30,135,150">
-                <Calendar/>
+                <Calendar x:Name="EndDateCalendar"/>
             </Viewbox>
 
-            <Button Content="Search" HorizontalAlignment="Left" Margin="590,30,25,25" VerticalAlignment="Top" Width="70"/>
+            <Button x:Name="SearchServersButton" Content="Search" Command="{Binding ServersInfoData}" HorizontalAlignment="Left" Margin="590,30,25,25" VerticalAlignment="Top" Width="70" Click="SearchServersButton_Click">
+                <!--<Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ServerDataMultiConverter}">
+                        <Binding Path="ServersComboBox" ElementName="SelectedItem"/>
+                        <Binding Path="StartDateCalendar.SelectedDate" ElementName="Value"/>
+                        <Binding Path="EndDateCalendar.SelectedDate" ElementName="Value"/>
+                    </MultiBinding>
+                </Button.CommandParameter>-->
+            </Button>
 
             <DataGrid Name="DataGamesGrid" Height="145" Margin="25,212,135,2"/>
             <Button Content="Learn" HorizontalAlignment="Left" Margin="590,310,25,0" VerticalAlignment="Top" Width="70"/>

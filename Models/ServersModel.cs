@@ -11,9 +11,11 @@ namespace WSE.Models
     public class ServersModel
     {
         public List<GameServer> Servers { get; set; }
+        public List<GameServer> ServersData { get; set; }
         public ServersModel()
         {
             Servers = new List<GameServer>();
+            ServersData = new List<GameServer>();
             LoadServers();
         }
 
@@ -25,6 +27,17 @@ namespace WSE.Models
             {
                 if (!Servers.Exists(x => x.serverName == serverData.serverName))
                     Servers.Add(serverData);
+            }
+        }
+
+        public async void LoadServersData(string gameServer, DateTime startDate, DateTime endDate)
+        {
+            var serversDataHttpClient = new ServerHttpClient();
+            var serversData = await serversDataHttpClient.GetServerDataListAsync(gameServer, startDate, endDate);
+            foreach (var serverData in serversData)
+            {
+                if (!ServersData.Exists(x => x.serverName == serverData.serverName))
+                    ServersData.Add(serverData);
             }
         }
     }

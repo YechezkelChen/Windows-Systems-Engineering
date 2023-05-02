@@ -24,21 +24,35 @@ namespace WSE.Services
 
         public async Task<List<Game>> GetGamesDataAsync()
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/GamesData");
-            response.EnsureSuccessStatusCode(); // Throw an exception if the status code is not successful
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<Game>>(content);
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUrl}/GamesData");
+                response.EnsureSuccessStatusCode(); // Throw an exception if the status code is not successful
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<Game>>(content);
+            }
+            catch (Exception)
+            {
+                return new List<Game>();
+            }
         }
 
         public async Task<List<GameServer>> GetServersListAsync()
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/api/ServerGame/ServersList");
-            response.EnsureSuccessStatusCode(); // Throw an exception if the status code is not successful
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<GameServer>>(content);
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUrl}/api/ServerGame/ServersList");
+                response.EnsureSuccessStatusCode(); // Throw an exception if the status code is not successful
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<GameServer>>(content);
+            }
+            catch(Exception)
+            {
+                return new List<GameServer>();
+            }
         }
 
-        public async Task<List<GameServerData>> GetServerDataListAsync(string serverName, DateTime? from = null, DateTime? until = null)
+        public async Task<List<GameServer>> GetServerDataListAsync(string serverName, DateTime? from = null, DateTime? until = null)
         {
             var query = $"?serverName={serverName}";
             if (from.HasValue && until.HasValue)
@@ -48,7 +62,7 @@ namespace WSE.Services
             var response = await _httpClient.GetAsync($"{_baseUrl}/api/ServerGame/ServerStat{query}");
             response.EnsureSuccessStatusCode(); // Throw an exception if the status code is not successful
             var content = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<GameServerData>>(content);
+            return JsonSerializer.Deserialize<List<GameServer>>(content);
         }
     }
 }

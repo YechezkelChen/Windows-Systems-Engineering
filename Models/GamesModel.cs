@@ -12,18 +12,10 @@ namespace WSE.Models
     {
         public List<Game> Games { get; set; }
 
-        //
-        public string GeneralInfo { get; set; }
-        //
-
         public GamesModel()
         {
             Games = new List<Game>();
             LoadGames();
-
-            //
-            GeneralInfo = "Successs the binding!!!!!";
-            //
         }
 
         public async void LoadGames()
