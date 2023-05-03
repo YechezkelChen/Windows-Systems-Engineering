@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -32,18 +33,6 @@ namespace WSE
             InitializeComponent();
             GamesVM = new GamesVM();
             ServersVM = new ServersVM();
-
-            this.DataGamesGrid.ItemsSource = new AnalyzeGameData[]
-            {
-                new AnalyzeGameData{ DayOfWeek = 1, Hour = 5, Season = 4, Load = 8 },
-                new AnalyzeGameData{ DayOfWeek = 2, Hour = 6, Season = 3, Load = 7 },
-                new AnalyzeGameData{ DayOfWeek = 3, Hour = 7, Season = 2, Load = 6 },
-                new AnalyzeGameData{ DayOfWeek = 4, Hour = 8, Season = 1, Load = 5 },
-            };
-
-            HighRectangle.Height= 50;
-            MediumRectangle.Height= 90;
-            LowRectangle.Height= 60;
         }
 
         private void GamesInformationButton_Click(object sender, RoutedEventArgs e)
@@ -115,6 +104,20 @@ namespace WSE
                 HealthMonitorGrid.Visibility = Visibility.Hidden;
                 PlayersMonitorGrid.Visibility = Visibility.Visible;
                 PlayersMonitorGrid.DataContext = ServersBox.SelectedItem;
+
+                GameServer server = (GameServer)ServersBox.SelectedItem;
+
+                object[] values = { server, DateTime.Now.AddDays(-1), DateTime.Now };
+                ServersVM.ServersInfoData.Execute(values);
+
+                List<GameServer> serversList = ServersVM.ServersData.ToList();
+                if (serversList.Count() != 0)
+                {
+                    TotalPlayersToday.Text = serversList.Sum(x => x.playerCount).ToString();
+                    MaxScore.Text = serversList.Max(x => x.maxScore).ToString();
+                    AveragePlayerTimeMin.Text = serversList.Average(x => x.playerTimeMin).ToString();
+                    CurrentPlayers.Text = server.playerCount.ToString();
+                }
             }
         }
 
@@ -126,16 +129,6 @@ namespace WSE
             AnalyzeGrid.Visibility = Visibility.Visible;
         }
 
-        private void DistributionButton_Click(object sender, RoutedEventArgs e)
-        {
-            chartCanvas.Visibility = Visibility.Visible;
-        }
-
-        private void PredictButton_Click(object sender, RoutedEventArgs e)
-        {
-            chartCanvas.Visibility = Visibility.Hidden;
-        }
-
         private void SearchServersButton_Click(object sender, RoutedEventArgs e)
         {
             if (ServersComboBox.SelectedItem == null || !StartDateCalendar.SelectedDate.HasValue || !EndDateCalendar.SelectedDate.HasValue || StartDateCalendar.SelectedDate.Value > EndDateCalendar.SelectedDate.Value)
@@ -144,30 +137,62 @@ namespace WSE
                 return;
             }
 
-            this.DataContext = ServersVM;
+            List<GameServer> serversData = ServersVM.ServersData.ToList();
 
-            ObservableCollection<GameServer> serversData = ServersVM.ServersData;
+            // First, group the servers by season
+            var seasonGroups = serversData.GroupBy(s => GetSeason(s.dateTime));
 
-            //
+            foreach (var seasonGroup in seasonGroups)
+            {
+                int season = seasonGroup.Key;
 
-            //
+                // Next, group the servers by day of the week within each season
+                var dayGroups = seasonGroup.GroupBy(s => s.dateTime.DayOfWeek);
+
+                Console.WriteLine($"Season {season}:");
+                foreach (var dayGroup in dayGroups)
+                {
+                    string dayOfWeek = dayGroup.Key.ToString();
+                    int serverCount = dayGroup.Count();
+                    Console.WriteLine($"{dayOfWeek}: {serverCount} servers");
+                }
+                Console.WriteLine();
+            }
+
+            if (serversData.Count() != 0)
+            {
+                chartCanvas.Visibility = Visibility.Visible;
+                float high = ((float)serversData.Where(x => x.playerCount >= 70000).Count() / serversData.Count()) * 100;
+                float medium = ((float)serversData.Where(x => x.playerCount >= 30000 && x.playerCount < 70000).Count() / serversData.Count()) * 100;
+                float low = ((float)serversData.Where(x => x.playerCount >= 0 && x.playerCount < 30000).Count() / serversData.Count()) * 100;
+
+                HighRectangle.Height = high;
+                MediumRectangle.Height = medium;
+                LowRectangle.Height = low;
+            }
 
             this.DataGamesGrid.ItemsSource = serversData;
-
-            var gameServer = (GameServer)ServersComboBox.SelectedItem;
-            var startDate = StartDateCalendar.SelectedDate.Value;
-            var endDate = EndDateCalendar.SelectedDate.Value;
-
-
-            MessageBox.Show("Good");
         }
-    }
 
-    public class AnalyzeGameData
-    {
-        public int DayOfWeek { get; set; }
-        public int Hour { get; set; }
-        public int Season { get; set; }
-        public int Load { get; set; }
+        private int GetSeason(DateTime date)
+        {
+            int month = date.Month;
+            if (month >= 3 && month <= 5)
+            {
+                return 1; // Spring
+            }
+            else if (month >= 6 && month <= 8)
+            {
+                return 2; // Summer
+            }
+            else if (month >= 9 && month <= 11)
+            {
+                return 3; // Autumn/Fall
+            }
+            else
+            {
+                return 4; // Winter
+            }
+        }
     }
 }

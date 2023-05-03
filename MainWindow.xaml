@@ -9,7 +9,9 @@
         Title="MainWindow" Height="510" Width="800" Style="{DynamicResource WindowStyle1}" AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen" Background="Black">
 
     <Window.Resources>
-        <ResourceDictionary Source="Style1.xaml"/>
+        <ResourceDictionary>
+            <local:ServerDataMultiConverter x:Key="ServerDataMultiConverter"/>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -168,15 +170,13 @@
                 <TextBlock x:Name="TotalPlayersToday" HorizontalAlignment="Left" Margin="482,55,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
                 <TextBlock HorizontalAlignment="Left" Margin="613,39,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Max Score" VerticalAlignment="Top" Foreground="White"/>
-                <TextBlock x:Name="MaxScore" Text="" HorizontalAlignment="Left" Margin="586,55,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
+                <TextBlock x:Name="MaxScore" HorizontalAlignment="Left" Margin="641,59,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
                 
                 <TextBlock HorizontalAlignment="Left" Margin="450,90,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Average Player Time [min]" VerticalAlignment="Top" Foreground="White"/>
                 <TextBlock x:Name="AveragePlayerTimeMin" HorizontalAlignment="Left" Margin="482,106,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
                 <TextBlock HorizontalAlignment="Left" Margin="613,90,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Current Players" VerticalAlignment="Top" Foreground="White"/>
-                <TextBlock x:Name="CurrentPlayers" Text="{Binding playerCount}" HorizontalAlignment="Left" Margin="628,106,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
-
-                <!--להוסיף גרף עומס לפי שעות.... צריך לחפש באינטרנט-->
+                <TextBlock x:Name="CurrentPlayers" HorizontalAlignment="Left" Margin="628,106,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 
             </Grid>
 
@@ -210,21 +210,19 @@
             </Viewbox>
 
             <Button x:Name="SearchServersButton" Content="Search" Command="{Binding ServersInfoData}" HorizontalAlignment="Left" Margin="590,30,25,25" VerticalAlignment="Top" Width="70" Click="SearchServersButton_Click">
-                <!--<Button.CommandParameter>
+                <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource ServerDataMultiConverter}">
-                        <Binding Path="ServersComboBox" ElementName="SelectedItem"/>
-                        <Binding Path="StartDateCalendar.SelectedDate" ElementName="Value"/>
-                        <Binding Path="EndDateCalendar.SelectedDate" ElementName="Value"/>
+                        <Binding ElementName="ServersComboBox" Path="SelectedItem"/>
+                        <Binding ElementName="StartDateCalendar" Path="SelectedDate"/>
+                        <Binding ElementName="EndDateCalendar" Path="SelectedDate"/>
                     </MultiBinding>
-                </Button.CommandParameter>-->
+                </Button.CommandParameter>
             </Button>
 
             <DataGrid Name="DataGamesGrid" Height="145" Margin="25,212,135,2"/>
-            <Button Content="Learn" HorizontalAlignment="Left" Margin="590,310,25,0" VerticalAlignment="Top" Width="70"/>
 
             <Menu x:Name="InfoAnalyze" Grid.Row="1" Margin="0,0,0,120" >
-                <Button x:Name="DistributionButton" Content="Distribution" Click="DistributionButton_Click"/>
-                <Button x:Name="PredictButton" Content="Predict" Click="PredictButton_Click"/>
+                <TextBlock Text="Distribution"/>
             </Menu>
 
             <Canvas x:Name="chartCanvas" Width="400" Height="120" Margin="150,30,167,0" Grid.Row="1" Visibility="Hidden">
@@ -247,8 +245,6 @@
                 <TextBlock Text="Medium" Canvas.Left="150" Canvas.Bottom="5" Foreground="White"/>
                 <TextBlock Text="Low" Canvas.Left="238" Canvas.Bottom="5" Foreground="White"/>
             </Canvas>
-
-            <!--??..להוסיף עץ החלטה-->
 
         </Grid>
 

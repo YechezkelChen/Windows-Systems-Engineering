@@ -36,7 +36,7 @@ namespace WSE.Models
             var serversData = await serversDataHttpClient.GetServerDataListAsync(gameServer, startDate, endDate);
             foreach (var serverData in serversData)
             {
-                if (!ServersData.Exists(x => x.serverName == serverData.serverName))
+                if (!ServersData.Exists(x => x.dateTime == serverData.dateTime))
                     ServersData.Add(serverData);
             }
         }
